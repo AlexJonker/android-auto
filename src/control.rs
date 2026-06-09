@@ -2,9 +2,7 @@
 
 use super::VERSION;
 use super::{AndroidAutoFrame, FrameHeader, FrameHeaderContents, FrameHeaderType};
-use crate::{
-    AndroidAutoConfiguration, AndroidAutoMainTrait, ChannelHandlerTrait, ChannelId, StreamMux, Wifi,
-};
+use crate::{AndroidAutoConfiguration, AndroidAutoMainTrait, ChannelHandlerTrait, ChannelId, Wifi};
 use protobuf::{Enum, Message};
 
 /// A control message on the android auto protocol

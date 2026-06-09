@@ -4,7 +4,7 @@ use super::{
     AndroidAutoCommonMessage, AndroidAutoConfiguration, AndroidAutoFrame, ChannelDescriptor,
     ChannelHandlerTrait, ChannelId, FrameHeader, FrameHeaderContents, FrameHeaderType,
 };
-use crate::{AndroidAutoMainTrait, StreamMux, Wifi};
+use crate::{AndroidAutoMainTrait, Wifi};
 use protobuf::Message;
 
 /// A message about sensors in android auto

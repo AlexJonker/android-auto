@@ -4,7 +4,7 @@ use tokio::io::{AsyncRead, AsyncWrite};
 
 use crate::{
     AndroidAutoControlMessage, AndroidAutoFrame, AndroidAutoFrameReceiver, FrameHeaderReceiver,
-    FrameReceiptError, FrameTransmissionError, SendableAndroidAutoMessage,
+    FrameTransmissionError, SendableAndroidAutoMessage,
 };
 
 /// A message sent to the ssl thread

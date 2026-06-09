@@ -4,7 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, AvChannelMessage,
-    ChannelHandlerTrait, ChannelId, StreamMux, Wifi, common::AndroidAutoCommonMessage,
+    ChannelHandlerTrait, ChannelId, Wifi, common::AndroidAutoCommonMessage,
 };
 
 /// The handler for speech audio for the android auto protocol

@@ -4,7 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, AvChannelMessage,
-    ChannelHandlerTrait, ChannelId, StreamMux, Wifi, common::AndroidAutoCommonMessage,
+    ChannelHandlerTrait, ChannelId, Wifi, common::AndroidAutoCommonMessage,
 };
 
 /// Handles the system audo channel of the android auto protocol

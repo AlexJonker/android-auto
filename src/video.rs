@@ -4,7 +4,7 @@ use super::{
     AndroidAutoCommonMessage, AndroidAutoConfiguration, AndroidAutoFrame, AvChannelMessage,
     ChannelHandlerTrait, ChannelId,
 };
-use crate::{AndroidAutoMainTrait, StreamMux, Wifi};
+use crate::{AndroidAutoMainTrait, Wifi};
 use protobuf::Message;
 
 /// The inner protected data for a video stream

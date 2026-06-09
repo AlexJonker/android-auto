@@ -4,7 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, ChannelHandlerTrait,
-    ChannelId, StreamMux, Wifi, common::AndroidAutoCommonMessage,
+    ChannelId, Wifi, common::AndroidAutoCommonMessage,
 };
 
 /// A message about the media status of currently playing media

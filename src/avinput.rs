@@ -4,8 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, AvChannelMessage,
-    ChannelHandlerTrait, ChannelId, FrameIoError, StreamMux, Wifi,
-    common::AndroidAutoCommonMessage,
+    ChannelHandlerTrait, ChannelId, FrameIoError, Wifi, common::AndroidAutoCommonMessage,
 };
 
 /// Handles the av input channel of the android auto protocol

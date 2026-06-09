@@ -4,7 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, ChannelHandlerTrait,
-    ChannelId, StreamMux, Wifi, common::AndroidAutoCommonMessage,
+    ChannelId, Wifi, common::AndroidAutoCommonMessage,
 };
 
 /// A message about binding input buttons on a compatible android auto head unit

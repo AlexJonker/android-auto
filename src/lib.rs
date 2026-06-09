@@ -291,10 +291,10 @@ pub trait AndroidAutoMainTrait:
     async fn do_usb_iteration(
         &self,
         d: nusb::DeviceInfo,
-        config: &AndroidAutoConfiguration,
-        setup: &AndroidAutoSetup,
+        _config: &AndroidAutoConfiguration,
+        _setup: &AndroidAutoSetup,
     ) -> Result<ConnectionType, ()> {
-        let main = self;
+        let _main = self;
         match d.open().await {
             Ok(d) => {
                 let aoa = usb::get_aoa_protocol(&d).await;
@@ -427,8 +427,8 @@ pub trait AndroidAutoMainTrait:
     /// does a wifi run
     async fn wifi_run(
         &self,
-        config: &AndroidAutoConfiguration,
-        setup: &AndroidAutoSetup,
+        _config: &AndroidAutoConfiguration,
+        _setup: &AndroidAutoSetup,
     ) -> (ConnectionType, AsyncFn, AsyncFn) {
         #[cfg(feature = "wireless")]
         {
@@ -499,7 +499,7 @@ pub trait AndroidAutoMainTrait:
     async fn run(
         self: Box<Self>,
         config: AndroidAutoConfiguration,
-        js: &mut tokio::task::JoinSet<Result<(), String>>,
+        _js: &mut tokio::task::JoinSet<Result<(), String>>,
         setup: &AndroidAutoSetup,
     ) -> Result<(), String> {
         log::info!("Running android auto server");
@@ -1055,7 +1055,7 @@ impl AndroidAutoFrame {
         ssl_stream: &mut rustls::client::ClientConnection,
     ) -> Result<(), FrameReceiptError> {
         if self.header.frame.get_encryption() {
-            let tls_len = u16::from_be_bytes([self.data[3], self.data[4]]);
+            let _tls_len = u16::from_be_bytes([self.data[3], self.data[4]]);
             let mut plain_data = vec![0u8; self.data.len()];
             let mut cursor = Cursor::new(&self.data);
             let mut index = 0;
@@ -1848,7 +1848,7 @@ async fn handle_client_generic<
     log::debug!("Waiting on first packet from android auto client");
 
     tokio::select! {
-        a = do_android_auto_loop(channel_handlers, sm.0, &sm.1, config, main) => {
+        _a = do_android_auto_loop(channel_handlers, sm.0, &sm.1, config, main) => {
 
         }
         _ = kill.1 => {

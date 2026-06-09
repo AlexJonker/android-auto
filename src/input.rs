@@ -4,7 +4,7 @@ use protobuf::Message;
 
 use crate::{
     AndroidAutoConfiguration, AndroidAutoFrame, AndroidAutoMainTrait, ChannelHandlerTrait,
-    ChannelId, FrameHeader, FrameHeaderType, StreamMux, Wifi, common::AndroidAutoCommonMessage,
+    ChannelId, FrameHeader, FrameHeaderType, Wifi, common::AndroidAutoCommonMessage,
     frame_header::FrameHeaderContents,
 };
 
