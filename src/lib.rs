@@ -464,7 +464,7 @@ pub trait AndroidAutoMainTrait:
                                 e
                             }
                             _ = kill.1 => {
-                                log::error!("Kill bluetooth service");
+                                log::info!("Kill bluetooth service");
                                 Ok(())
                             }
                         }
@@ -506,11 +506,11 @@ pub trait AndroidAutoMainTrait:
 
         let (d, abort, kill) = tokio::select! {
             a = self.usb_run(&config, setup) => {
-                log::error!("usb config finished");
+                log::info!("usb config finished");
                 a
             }
             b = self.wifi_run(&config, setup) => {
-                log::error!("wifi config finished");
+                log::info!("wifi config finished");
                 b
             }
         };
@@ -518,10 +518,10 @@ pub trait AndroidAutoMainTrait:
         self.connect().await;
         tokio::select! {
             a = d.run(config, &self) => {
-                log::error!("Android auto finished {:?}", a);
+                log::info!("Android auto finished {:?}", a);
             }
             b = abort() => {
-                log::error!("Android auto aborted {:?}", b);
+                log::warn!("Android auto aborted {:?}", b);
             }
         }
         kill().await;
@@ -1608,7 +1608,7 @@ async fn handle_bluetooth_client(
         match Bluetooth::MessageId::from_i32(ty as i32) {
             Some(m) => match m {
                 Bluetooth::MessageId::BLUETOOTH_SOCKET_INFO_REQUEST => {
-                    log::error!("Got a socket info request {:x?}", message);
+                    log::debug!("Got a socket info request {:x?}", message);
                     break;
                 }
                 Bluetooth::MessageId::BLUETOOTH_NETWORK_INFO_REQUEST => {
@@ -1830,7 +1830,7 @@ async fn handle_client_generic<
         {
             let mut ch = CHANNEL_HANDLERS.write().await;
             ch.clear();
-            log::error!(
+            log::debug!(
                 "Adding {} channels to CHANNEL_HANDLERS",
                 channel_handlers.len()
             );

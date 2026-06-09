@@ -239,7 +239,7 @@ impl android_auto::AndroidAutoInputChannelTrait for AndroidAuto {
 #[async_trait::async_trait]
 impl android_auto::AndroidAutoAudioInputTrait for AndroidAuto {
     async fn open_input_channel(&self) -> Result<(), ()> {
-        log::error!("Start audio input channel");
+        log::info!("Start audio input channel");
         let mut s = self.inner.lock().await;
         let config = cpal::StreamConfig {
             channels: 1,
@@ -284,7 +284,7 @@ impl android_auto::AndroidAutoAudioInputTrait for AndroidAuto {
     }
 
     async fn stop_input_audio(&self) {
-        log::error!("Stop audio input channel");
+        log::info!("Stop audio input channel");
         let mut s = self.inner.lock().await;
         s.input_stream.take();
     }

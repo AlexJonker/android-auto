@@ -373,11 +373,11 @@ impl ChannelHandlerTrait for ControlChannelHandler {
         if let Ok(msg2) = msg2 {
             match msg2 {
                 AndroidAutoControlMessage::VoiceSession(m) => {
-                    log::error!("Received voice session request {:?}", m);
+                    log::debug!("Received voice session request {:?}", m);
                 }
                 AndroidAutoControlMessage::NavigationFocusResponse(_) => unimplemented!(),
                 AndroidAutoControlMessage::NavigationFocusRequest(m) => {
-                    log::error!("Received navigation focus request {}", m.type_());
+                    log::debug!("Received navigation focus request {}", m.type_());
                     let mut m2 = Wifi::NavigationFocusResponse::new();
                     m2.set_type(2);
                     stream
@@ -475,7 +475,7 @@ impl ChannelHandlerTrait for ControlChannelHandler {
                     status,
                 } => {
                     if status == 0xFFFF {
-                        log::error!("Version mismatch");
+                        log::warn!("Version mismatch");
                         return Err(super::FrameIoError::IncompatibleVersion(major, minor));
                     }
                     log::info!("Android auto client version: {}.{}", major, minor);
