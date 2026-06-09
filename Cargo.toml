@@ -8,32 +8,32 @@ publish = ["crates-io"]
 license = "LGPL-3.0-or-later"
 
 [dependencies]
-async-trait = "0.1.88"
-aws-lc-rs = { version = "1.13.1", features = ["bindgen"] }
-bitfield = "0.19.0"
-bluetooth-rust = { version = "0.3.8", optional = true }
+async-trait = "0.1.89"
+aws-lc-rs = { version = "1.17.0", features = ["bindgen"] }
+bitfield = "0.19.4"
+bluetooth-rust = { version = "0.4.1", optional = true }
 enum_dispatch = "0.3.13"
 futures = "0.3.30"
-log = "0.4.27"
+log = "0.4.32"
 nusb = { version = "0.2.2", features = ["tokio"], optional = true }
 protobuf = "3.7.2"
-rustls = { version = "0.23.27", features=["ring"]}
+rustls = { version = "0.23.40", features=["ring"]}
 serde = {version = "1.0.219", features = ["derive"]}
-tokio = { version = "1.40.0", features = ["full"] }
-webpki-roots = "0.26.9"
+tokio = { version = "1.52.3", features = ["full"] }
+webpki-roots = "1.0.7"
 
 [build-dependencies]
 protobuf-codegen = "3.7.2"
 
 [dev-dependencies]
-cpal = "0.17.3"
-eframe = "0.33.3"
-nmrs = "2.0.1"
+cpal = "0.18.1"
+eframe = "0.34.3"
+nmrs = "3.2.0"
 openh264 = "0.9.3"
-ringbuf = "0.4.8"
+ringbuf = "0.5.0"
 simple_logger = "5.2.0"
-zbus = "5.13.2"
-zvariant = "5.9.2"
+zbus = "5.16.0"
+zvariant = "5.12.0"
 
 [features]
 default = ["usb"]

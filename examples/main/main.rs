@@ -249,7 +249,7 @@ impl android_auto::AndroidAutoAudioInputTrait for AndroidAuto {
         if let Some(ai) = &s.audio_input {
             let android_send = s.android_send.clone();
             if let Ok(str) = ai.build_input_stream(
-                &config,
+                config,
                 move |data: &[i16], _| {
                     let bytes: Vec<u8> = data.iter().flat_map(|s| s.to_le_bytes()).collect();
                     let timestamp = std::time::SystemTime::now()
@@ -414,7 +414,7 @@ impl AndroidAuto {
                             let rb = ringbuf::HeapRb::new(48000);
                             let (producer, mut consumer) = ringbuf::traits::Split::split(rb);
                             let s = ao.build_output_stream(
-                                &mc.config(),
+                                mc.config(),
                                 move |data: &mut [i16], _: &cpal::OutputCallbackInfo| {
                                     let mut index = 0;
                                     while index < data.len() {
@@ -441,7 +441,7 @@ impl AndroidAuto {
                             let rb = ringbuf::HeapRb::new(16000);
                             let (producer, mut consumer) = ringbuf::traits::Split::split(rb);
                             let s = ao.build_output_stream(
-                                &mc.config(),
+                                mc.config(),
                                 move |data: &mut [i16], _: &cpal::OutputCallbackInfo| {
                                     let mut index = 0;
                                     while index < data.len() {
@@ -468,7 +468,7 @@ impl AndroidAuto {
                             let rb = ringbuf::HeapRb::new(16000);
                             let (producer, mut consumer) = ringbuf::traits::Split::split(rb);
                             let s = ao.build_output_stream(
-                                &mc.config(),
+                                mc.config(),
                                 move |data: &mut [i16], _: &cpal::OutputCallbackInfo| {
                                     let mut index = 0;
                                     while index < data.len() {
@@ -570,7 +570,7 @@ impl MyEguiApp {
 }
 
 impl eframe::App for MyEguiApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         let mut replace_container = false;
         if let Some(con) = &mut self.container {
             while let Ok(v) = con.recv.try_recv() {
@@ -616,7 +616,7 @@ impl eframe::App for MyEguiApp {
                                         pixels,
                                     };
                                     if self.android_auto_texture.is_none() {
-                                        self.android_auto_texture = Some(ctx.load_texture(
+                                        self.android_auto_texture = Some(ui.ctx().load_texture(
                                             "android_auto",
                                             image,
                                             egui::TextureOptions::LINEAR,
@@ -635,10 +635,10 @@ impl eframe::App for MyEguiApp {
         if replace_container {
             self.container = Some(AndroidAutoContainer::new(self.setup));
         }
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             let size = ui.available_size();
             if let Some(t) = &self.android_auto_texture {
-                ctx.request_repaint();
+                ui.ctx().request_repaint();
                 let isize = t.size();
                 let zoom = isize[1] as f32 / size.y;
                 let zoom2 = isize[0] as f32 / size.x;
