@@ -21,6 +21,7 @@ rustls = { version = "0.23.40", features=["ring"]}
 serde = {version = "1.0.219", features = ["derive"]}
 tokio = { version = "1.52.3", features = ["full"] }
 webpki-roots = "1.0.7"
+rustls-webpki = "0.103.13"
 
 [build-dependencies]
 protobuf-codegen = "3.7.2"
@@ -39,7 +40,3 @@ zvariant = "5.12.0"
 default = ["usb"]
 wireless = ["dep:bluetooth-rust"]
 usb = ["dep:nusb"]
-
-#this patch is needed for the v1 certificate in src/cert.rs
-[patch.crates-io]
-rustls-webpki = { git = "https://github.com/uglyoldbob/webpki", branch = "main5" }

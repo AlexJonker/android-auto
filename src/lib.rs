@@ -1688,6 +1688,26 @@ async fn wifi_service<T: AndroidAutoWirelessTrait + Send + ?Sized>(
     }
 }
 
+/// Custom client certificate resolver that works around rustls rejecting v1 certificates.
+#[derive(Debug)]
+struct ClientCertResolver {
+    certified_key: Arc<rustls::sign::CertifiedKey>,
+}
+
+impl rustls::client::ResolvesClientCert for ClientCertResolver {
+    fn resolve(
+        &self,
+        _root_hint_subjects: &[&[u8]],
+        _sigschemes: &[rustls::SignatureScheme],
+    ) -> Option<Arc<rustls::sign::CertifiedKey>> {
+        Some(self.certified_key.clone())
+    }
+
+    fn has_certs(&self) -> bool {
+        true
+    }
+}
+
 /// Handle a single android auto device for a head unit
 async fn handle_client_generic<
     T: AndroidAutoMainTrait + ?Sized,
@@ -1741,10 +1761,13 @@ async fn handle_client_generic<
         .add(aautocertder)
         .map_err(|_| ClientError::InvalidRootCert)?;
     let root_store = Arc::new(root_store);
+    let signing_key = rustls::crypto::ring::sign::any_supported_type(&key)
+        .map_err(|_| ClientError::InvalidClientPrivateKey)?;
+    let certified_key = Arc::new(rustls::sign::CertifiedKey::new(cert, signing_key));
+    let resolver = Arc::new(ClientCertResolver { certified_key });
     let mut ssl_client_config = rustls::ClientConfig::builder()
         .with_root_certificates(root_store.clone())
-        .with_client_auth_cert(cert, key)
-        .unwrap();
+        .with_client_cert_resolver(resolver);
     let sver = Arc::new(AndroidAutoServerVerifier::new(root_store));
     ssl_client_config.dangerous().set_certificate_verifier(sver);
     let sslconfig = Arc::new(ssl_client_config);
