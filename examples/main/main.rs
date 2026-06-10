@@ -708,6 +708,12 @@ impl eframe::App for MyEguiApp {
             }
         });
     }
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        let fps = 30.0;
+        let frame_time = std::time::Duration::from_secs_f64(1.0 / fps);
+
+        ctx.request_repaint_after(frame_time);
+    }
 }
 
 struct AndroidAutoContainer {
