@@ -13,14 +13,14 @@ aws-lc-rs = { version = "1.17.0", features = ["bindgen"] }
 bitfield = "0.19.4"
 bluetooth-rust = { version = "0.4.1", optional = true }
 enum_dispatch = "0.3.13"
-futures = "0.3.30"
-log = "0.4.32"
-nusb = { version = "0.2.2", features = ["tokio"], optional = true }
+futures = "0.3.32"
+log = "0.4.33"
+nusb = { version = "0.2.4", features = ["tokio"], optional = true }
 protobuf = "3.7.2"
-rustls = { version = "0.23.40", features=["ring"]}
-serde = {version = "1.0.219", features = ["derive"]}
+rustls = { version = "0.23.41", features=["ring"]}
+serde = {version = "1.0.228", features = ["derive"]}
 tokio = { version = "1.52.3", features = ["full"] }
-webpki-roots = "1.0.7"
+webpki-roots = "1.0.8"
 rustls-webpki = "0.103.13"
 
 [build-dependencies]
@@ -29,7 +29,7 @@ protobuf-codegen = "3.7.2"
 [dev-dependencies]
 cpal = "0.18.1"
 eframe = "0.34.3"
-nmrs = "3.2.0"
+nmrs = "3.2.1"
 openh264 = "0.9.3"
 ringbuf = "0.5.0"
 simple_logger = "5.2.0"
