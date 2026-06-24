@@ -96,13 +96,15 @@ enum MessageToAsync {
 impl android_auto::AndroidAutoVideoChannelTrait for AndroidAuto {
     async fn receive_video(&self, data: Vec<u8>, timestamp: Option<u64>) {
         let i = self.inner.lock().await;
-        let _ = i
+        if let Err(e) = i
             .send
-            .send(MessageFromAsync::VideoData {
+            .try_send(MessageFromAsync::VideoData {
                 data,
                 _timestamp: timestamp,
             })
-            .await;
+        {
+            log::warn!("Dropped video frame: {e:?}");
+        }
     }
 
     async fn setup_video(&self) -> Result<(), ()> {
@@ -209,8 +211,8 @@ impl android_auto::AndroidAutoAudioOutputTrait for AndroidAuto {
     }
 
     async fn stop_output_audio(&self, t: android_auto::AudioChannelType) {
-        let s = self.inner.lock().await;
         tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+        let s = self.inner.lock().await;
         match t {
             android_auto::AudioChannelType::Media => {
                 s.media_stream.as_ref().map(|m| m.1.pause());
@@ -687,8 +689,6 @@ impl eframe::App for MyEguiApp {
                         te.set_touch_action(android_auto::Wifi::touch_action::Enum::POINTER_UP);
                     } else if r.dragged() {
                         te.set_touch_action(android_auto::Wifi::touch_action::Enum::DRAG);
-                    } else if r.hovered() {
-                        te.set_touch_action(android_auto::Wifi::touch_action::Enum::DRAG);
                     } else {
                         do_touch = false;
                     }
@@ -696,11 +696,11 @@ impl eframe::App for MyEguiApp {
                         i_event.touch_event = android_auto::protobuf::MessageField::some(te);
                         let e = android_auto::AndroidAutoMessage::Input(i_event);
                         if let Some(con) = &mut self.container {
-                            let a = con
+                            if let Err(e) = con
                                 .send
-                                .blocking_send(MessageToAsync::AndroidAutoMessage(e.sendable()));
-                            if let Err(e) = a {
-                                log::error!("Error sending touch event {:?}", e);
+                                .try_send(MessageToAsync::AndroidAutoMessage(e.sendable()))
+                            {
+                                log::warn!("Dropped touch event: {e:?}");
                             }
                         }
                     }

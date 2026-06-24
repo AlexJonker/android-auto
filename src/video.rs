@@ -108,7 +108,6 @@ impl ChannelHandlerTrait for VideoChannelHandler {
                 AvChannelMessage::AvChannelOpen(_chan, _m) => todo!(),
                 AvChannelMessage::MediaIndicationAck(_, _) => unimplemented!(),
                 AvChannelMessage::MediaIndication(_chan, time, data) => {
-                    main.receive_video(data, time).await;
                     let mut m2 = Wifi::AVMediaAckIndication::new();
                     {
                         let inner = self.inner.lock().unwrap();
@@ -122,10 +121,11 @@ impl ChannelHandlerTrait for VideoChannelHandler {
                     stream
                         .write_frame(AvChannelMessage::MediaIndicationAck(channel, m2).into())
                         .await?;
+                    main.receive_video(data, time).await;
                 }
                 AvChannelMessage::SetupRequest(_chan, _m) => {
                     let mut m2 = Wifi::AVChannelSetupResponse::new();
-                    m2.set_max_unacked(1);
+                    m2.set_max_unacked(5);
                     m2.set_media_status(Wifi::avchannel_setup_status::Enum::OK);
                     m2.configs.push(0);
                     stream
