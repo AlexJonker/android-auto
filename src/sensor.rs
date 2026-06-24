@@ -9,6 +9,7 @@ use protobuf::Message;
 
 /// A message about sensors in android auto
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum SensorMessage {
     /// A request to start a specific sensor
     SensorStartRequest(ChannelId, Wifi::SensorStartRequestMessage),

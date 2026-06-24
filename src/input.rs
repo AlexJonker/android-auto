@@ -10,6 +10,7 @@ use crate::{
 
 /// A message about binding input buttons on a compatible android auto head unit
 #[derive(Debug)]
+#[allow(dead_code)]
 enum InputMessage {
     /// A message requesting input buttons to be bound
     BindingRequest(ChannelId, Wifi::BindingRequest),

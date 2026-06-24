@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// A message sent to the ssl thread
-pub enum SslThreadData {
+pub(crate) enum SslThreadData {
     /// The handshake is starting
     HandshakeStart,
     /// Data to send out for handshake process
@@ -64,7 +64,7 @@ impl<U: AsyncWrite + Unpin> SslStreamThread<U> {
                     log::error!("Error receiving frame: {:?}", e);
                     return Err(format!("frame error {:?}", e));
                 }
-                self.dout.send(SslThreadResponse::Data(data)).await;
+                let _ = self.dout.send(SslThreadResponse::Data(data)).await;
             }
             SslThreadData::HandshakeStart => {
                 if self.hs_started {
@@ -268,9 +268,9 @@ impl StreamMux {
                 if let Ok(Some(fh)) = fhr.read(&mut read).await {
                     if let Ok(Some(f)) = fr.read(&fh, &mut read).await {
                         if f.header.frame.get_encryption() {
-                            chan_ssl.send(SslThreadData::DecryptMe(f)).await;
+                            let _ = chan_ssl.send(SslThreadData::DecryptMe(f)).await;
                         } else {
-                            chanw.send(SslThreadResponse::Data(f)).await;
+                            let _ = chanw.send(SslThreadResponse::Data(f)).await;
                         }
                     }
                 }

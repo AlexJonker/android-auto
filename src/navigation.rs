@@ -11,11 +11,11 @@ use crate::{
 #[derive(Debug)]
 enum NavigationMessage {
     /// A message indicating navigation status
-    Status(ChannelId, Wifi::NavigationStatus),
+    Status((), Wifi::NavigationStatus),
     /// A message that conveys turn information
-    TurnIndication(ChannelId, Wifi::NavigationTurnEvent),
+    TurnIndication((), Wifi::NavigationTurnEvent),
     /// A message that conveys distance for navigation
-    DistanceIndication(ChannelId, Wifi::NavigationDistanceEvent),
+    DistanceIndication((), Wifi::NavigationDistanceEvent),
 }
 
 impl From<NavigationMessage> for AndroidAutoFrame {
@@ -40,7 +40,7 @@ impl TryFrom<&AndroidAutoFrame> for NavigationMessage {
                 Wifi::navigation_channel_message::Enum::STATUS => {
                     let m = Wifi::NavigationStatus::parse_from_bytes(&value.data[2..]);
                     match m {
-                        Ok(m) => Ok(Self::Status(value.header.channel_id, m)),
+                        Ok(m) => Ok(Self::Status((), m)),
                         Err(e) => Err(format!("Invalid frame: {}", e)),
                     }
                 }
@@ -48,14 +48,14 @@ impl TryFrom<&AndroidAutoFrame> for NavigationMessage {
                 Wifi::navigation_channel_message::Enum::TURN_EVENT => {
                     let m = Wifi::NavigationTurnEvent::parse_from_bytes(&value.data[2..]);
                     match m {
-                        Ok(m) => Ok(Self::TurnIndication(value.header.channel_id, m)),
+                        Ok(m) => Ok(Self::TurnIndication((), m)),
                         Err(e) => Err(format!("Invalid frame: {}", e)),
                     }
                 }
                 Wifi::navigation_channel_message::Enum::DISTANCE_EVENT => {
                     let m = Wifi::NavigationDistanceEvent::parse_from_bytes(&value.data[2..]);
                     match m {
-                        Ok(m) => Ok(Self::DistanceIndication(value.header.channel_id, m)),
+                        Ok(m) => Ok(Self::DistanceIndication((), m)),
                         Err(e) => Err(format!("Invalid frame: {}", e)),
                     }
                 }

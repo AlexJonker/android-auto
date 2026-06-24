@@ -25,7 +25,7 @@ use bluetooth_rust::{
 use futures::StreamExt;
 use rustls::pki_types::{CertificateDer, pem::PemObject};
 use tokio::{
-    io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
+    io::{AsyncRead, AsyncReadExt, AsyncWrite},
     sync::RwLockReadGuard,
 };
 
@@ -150,7 +150,8 @@ pub enum FrameIoError {
 
 /// Errors that can occur during communication with a client
 #[derive(Debug)]
-pub enum ClientError {
+#[allow(dead_code)]
+pub(crate) enum ClientError {
     /// The root certificate for the ssl communications was invalid
     InvalidRootCert,
     /// The client certificate was invalid
@@ -1144,11 +1145,11 @@ pub enum SslError {
 /// Responsible for receiving a full frame from the compatible android auto device
 struct AndroidAutoFrameReceiver {
     /// Length received so far
-    chunk_length: Vec<u8>,
+    _chunk_length: Vec<u8>,
     /// The length of the frame to receive, if it is known yet
     len: Option<u16>,
     /// The data for the current frame
-    current_frame: Vec<u8>,
+    _current_frame: Vec<u8>,
     /// The data received so far for a multi-frame packet
     rx_sofar: Vec<Vec<u8>>,
 }
@@ -1157,9 +1158,9 @@ impl AndroidAutoFrameReceiver {
     /// Construct a new frame receiver
     fn new() -> Self {
         Self {
-            chunk_length: Vec::new(),
+            _chunk_length: Vec::new(),
             len: None,
-            current_frame: Vec::new(),
+            _current_frame: Vec::new(),
             rx_sofar: Vec::new(),
         }
     }
@@ -1880,7 +1881,7 @@ async fn handle_client_generic<
 
         }
     }
-    kill2.0.send(());
+    let _ = kill2.0.send(());
     Ok(())
 }
 

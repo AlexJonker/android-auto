@@ -11,9 +11,9 @@ use crate::{
 #[derive(Debug)]
 enum MediaStatusMessage {
     /// A message containing basic information about changes to the currently playing media
-    Playback(ChannelId, Wifi::MediaInfoChannelPlaybackData),
+    Playback((), Wifi::MediaInfoChannelPlaybackData),
     /// The metadata containing information about the media currently playing
-    Metadata(ChannelId, Wifi::MediaInfoChannelMetadataData),
+    Metadata((), Wifi::MediaInfoChannelMetadataData),
     /// The media status message was invalid for some reason
     Invalid,
 }
@@ -40,14 +40,14 @@ impl TryFrom<&AndroidAutoFrame> for MediaStatusMessage {
                 Wifi::media_info_channel_message::Enum::PLAYBACK => {
                     let m = Wifi::MediaInfoChannelPlaybackData::parse_from_bytes(&value.data);
                     match m {
-                        Ok(m) => Ok(Self::Playback(value.header.channel_id, m)),
+                        Ok(m) => Ok(Self::Playback((), m)),
                         Err(_) => Ok(Self::Invalid),
                     }
                 }
                 Wifi::media_info_channel_message::Enum::METADATA => {
                     let m = Wifi::MediaInfoChannelMetadataData::parse_from_bytes(&value.data);
                     match m {
-                        Ok(m) => Ok(Self::Metadata(value.header.channel_id, m)),
+                        Ok(m) => Ok(Self::Metadata((), m)),
                         Err(_) => Ok(Self::Invalid),
                     }
                 }
