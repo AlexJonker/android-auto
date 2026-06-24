@@ -670,6 +670,7 @@ version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d90d3fd7a3e9105be827cee98acdbd25b10ae3b864354ea0b27cd7bee8dbd172"
 dependencies = [
+ "async-trait",
  "bluer",
  "bytes",
  "futures",
@@ -678,6 +679,7 @@ dependencies = [
  "libc",
  "log",
  "serde",
+ "tokio",
  "windows",
  "winit",
 ]

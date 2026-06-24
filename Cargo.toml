@@ -11,7 +11,7 @@ license = "LGPL-3.0-or-later"
 async-trait = "0.1.89"
 aws-lc-rs = { version = "1.17.0", features = ["bindgen"] }
 bitfield = "0.19.4"
-bluetooth-rust = { version = "0.4.1", optional = true }
+bluetooth-rust = { version = "0.4.1", features = ["async"], optional = true }
 enum_dispatch = "0.3.13"
 futures = "0.3.32"
 log = "0.4.33"

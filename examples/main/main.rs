@@ -1,6 +1,6 @@
 //! The main example for this library. Use release mode to run it. openh264 is too slow for debug mode.
 #[cfg(feature = "wireless")]
-use bluetooth_rust::{BluetoothAdapterTrait, MessageToBluetoothHost};
+use bluetooth_rust::MessageToBluetoothHost;
 use ringbuf::traits::Producer;
 use std::{collections::HashSet, sync::Arc};
 use tokio::sync::Mutex;
@@ -47,12 +47,10 @@ impl android_auto::AndroidAutoWirelessTrait for AndroidAuto {
     async fn setup_bluetooth_profile(
         &self,
         suggestions: &bluetooth_rust::BluetoothRfcommProfileSettings,
-    ) -> Result<bluetooth_rust::BluetoothRfcommProfileAsync, String> {
-        if let Some(b) = self.bluetooth.supports_async() {
-            b.register_rfcomm_profile(suggestions.clone()).await
-        } else {
-            Err("Async not supported".to_string())
-        }
+    ) -> Result<bluetooth_rust::BluetoothRfcommProfile, String> {
+        self.bluetooth
+            .register_rfcomm_profile(suggestions.clone())
+            .await
     }
 
     /// Returns wifi details
@@ -96,13 +94,10 @@ enum MessageToAsync {
 impl android_auto::AndroidAutoVideoChannelTrait for AndroidAuto {
     async fn receive_video(&self, data: Vec<u8>, timestamp: Option<u64>) {
         let i = self.inner.lock().await;
-        if let Err(e) = i
-            .send
-            .try_send(MessageFromAsync::VideoData {
-                data,
-                _timestamp: timestamp,
-            })
-        {
+        if let Err(e) = i.send.try_send(MessageFromAsync::VideoData {
+            data,
+            _timestamp: timestamp,
+        }) {
             log::warn!("Dropped video frame: {e:?}");
         }
     }
@@ -762,23 +757,15 @@ impl AndroidAutoContainer {
                     let bluechan = tokio::sync::mpsc::channel(5);
                     let mut bluetooth = bluetooth_rust::BluetoothAdapterBuilder::new();
                     bluetooth.with_sender(bluechan.0);
-                    let bluetooth = Arc::new(
-                        bluetooth
-                            .async_build()
-                            .await
-                            .expect("Could not open bluetooth"),
-                    );
+                    let bluetooth =
+                        Arc::new(bluetooth.build().await.expect("Could not open bluetooth"));
                     (bluechan.1, bluetooth)
                 };
                 #[cfg(feature = "wireless")]
-                {
-                    if let Some(bluetooth) = bluetooth.supports_async() {
-                        bluetooth
-                            .set_discoverable(true)
-                            .await
-                            .expect("Failed to make bluetooth discoverable");
-                    }
-                }
+                bluetooth
+                    .set_discoverable(true)
+                    .await
+                    .expect("Failed to make bluetooth discoverable");
 
                 #[cfg(feature = "wireless")]
                 tokio::spawn(async move {
@@ -804,13 +791,8 @@ impl AndroidAutoContainer {
                 });
 
                 #[cfg(feature = "wireless")]
-                let blue_addresses: Vec<bluetooth_rust::BluetoothAdapterAddress> = {
-                    if let Some(bluetooth) = bluetooth.supports_async() {
-                        bluetooth.addresses().await
-                    } else {
-                        panic!("Async not supported");
-                    }
-                };
+                let blue_addresses: Vec<bluetooth_rust::BluetoothAdapterAddress> =
+                    bluetooth.addresses().await;
                 #[cfg(feature = "wireless")]
                 let bluetooth_address = blue_addresses
                     .first()

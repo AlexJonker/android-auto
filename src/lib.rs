@@ -19,13 +19,11 @@ compile_error!("One of wireless or usb features must be enabled, both is also ok
 use ::protobuf::Message;
 use Wifi::ChannelDescriptor;
 #[cfg(feature = "wireless")]
-use bluetooth_rust::{
-    BluetoothRfcommConnectableAsyncTrait, BluetoothRfcommProfileAsyncTrait, BluetoothStream,
-};
+use bluetooth_rust::BluetoothStream;
 use futures::StreamExt;
 use rustls::pki_types::{CertificateDer, pem::PemObject};
 use tokio::{
-    io::{AsyncRead, AsyncReadExt, AsyncWrite},
+    io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
     sync::RwLockReadGuard,
 };
 
@@ -479,7 +477,7 @@ pub trait AndroidAutoMainTrait:
                                 Box::new(move || Box::pin(async move { Never::new().await }));
                             let kill2: AsyncFn = Box::new(move || {
                                 Box::pin(async move {
-                                    kill.0.send(());
+                                    let _ = kill.0.send(());
                                 })
                             });
                             return (e, disconnect, kill2);
@@ -546,7 +544,7 @@ pub trait AndroidAutoWirelessTrait: AndroidAutoMainTrait {
     async fn setup_bluetooth_profile(
         &self,
         suggestions: &bluetooth_rust::BluetoothRfcommProfileSettings,
-    ) -> Result<bluetooth_rust::BluetoothRfcommProfileAsync, String>;
+    ) -> Result<bluetooth_rust::BluetoothRfcommProfile, String>;
 
     /// Returns wifi details
     fn get_wifi_details(&self) -> NetworkInformation;
@@ -1651,16 +1649,14 @@ async fn handle_bluetooth_client(
 #[cfg(feature = "wireless")]
 /// Runs the bluetooth service that allows wireless android auto connections to start up
 async fn bluetooth_service(
-    mut profile: bluetooth_rust::BluetoothRfcommProfileAsync,
+    mut profile: bluetooth_rust::BluetoothRfcommProfile,
     wireless: Arc<dyn AndroidAutoWirelessTrait>,
 ) -> Result<(), String> {
     log::info!("Starting bluetooth service");
     loop {
         if let Ok(c) = profile.connectable().await {
             let network2 = wireless.get_wifi_details();
-            use bluetooth_rust::BluetoothRfcommConnectableAsyncTrait;
-            let mut stream =
-                bluetooth_rust::BluetoothRfcommConnectableAsyncTrait::accept(c).await?;
+            let mut stream = c.accept().await?;
             let e = handle_bluetooth_client(&mut stream.0, &network2).await;
             log::info!("Bluetooth client disconnected: {:?}", e);
         }
