@@ -1578,6 +1578,7 @@ async fn handle_bluetooth_client(
     stream: &mut BluetoothStream,
     network2: &NetworkInformation,
 ) -> Result<(), String> {
+    use tokio::io::{AsyncReadExt, AsyncWriteExt};
     let mut s = Bluetooth::SocketInfoRequest::new();
     s.set_ip_address(network2.ip.clone());
     s.set_port(network2.port as u32);
