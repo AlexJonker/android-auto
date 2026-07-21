@@ -626,7 +626,7 @@ impl eframe::App for MyEguiApp {
         if replace_container {
             self.container = Some(AndroidAutoContainer::new(self.setup));
         }
-        egui::CentralPanel::default().show_inside(ui, |ui| {
+        egui::CentralPanel::default().show(ui, |ui| {
             let size = ui.available_size();
             if let Some(t) = &self.android_auto_texture {
                 ui.ctx().request_repaint();
@@ -696,12 +696,6 @@ impl eframe::App for MyEguiApp {
                 }
             }
         });
-    }
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let fps = 30.0;
-        let frame_time = std::time::Duration::from_secs_f64(1.0 / fps);
-
-        ctx.request_repaint_after(frame_time);
     }
 }
 
