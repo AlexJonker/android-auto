@@ -23,7 +23,7 @@ use bluetooth_rust::BluetoothStream;
 use futures::StreamExt;
 use rustls::pki_types::{CertificateDer, pem::PemObject};
 use tokio::{
-    io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt},
+    io::{AsyncRead, AsyncReadExt, AsyncWrite},
     sync::RwLockReadGuard,
 };
 
@@ -370,14 +370,13 @@ pub trait AndroidAutoMainTrait:
                         loop {
                             if let Some(dev) = watcher.next().await {
                                 use nusb::hotplug::HotplugEvent;
-                                if let HotplugEvent::Connected(di) = dev {
-                                    if usb::is_android_device(&di) {
+                                if let HotplugEvent::Connected(di) = dev
+                                    && usb::is_android_device(&di) {
                                         log::info!("Hotplug device {:?}", di);
                                         tokio::time::sleep(std::time::Duration::from_millis(500))
                                             .await;
                                         break di;
                                     }
-                                }
                             }
                         }
                     };
@@ -1917,25 +1916,22 @@ async fn do_android_auto_loop<T: AndroidAutoMainTrait + ?Sized>(
 async fn watch_for_disconnect(device_address: Arc<nusb::DeviceInfo>) {
     let mut watcher = nusb::watch_devices().unwrap();
     while let Some(event) = watcher.next().await {
-        match event {
-            nusb::hotplug::HotplugEvent::Disconnected(_info) => {
-                let devs = nusb::list_devices().await;
-                if let Ok(mut devs) = devs {
-                    if devs
-                        .find(|a| {
-                            a.busnum() == device_address.busnum()
-                                && a.device_address() == device_address.device_address()
-                        })
-                        .is_none()
-                    {
-                        log::info!("Android Auto USB device disconnected");
-                        break;
-                    }
-                } else {
+        if let nusb::hotplug::HotplugEvent::Disconnected(_info) = event {
+            let devs = nusb::list_devices().await;
+            if let Ok(mut devs) = devs {
+                if devs
+                    .find(|a| {
+                        a.busnum() == device_address.busnum()
+                            && a.device_address() == device_address.device_address()
+                    })
+                    .is_none()
+                {
+                    log::info!("Android Auto USB device disconnected");
                     break;
                 }
+            } else {
+                break;
             }
-            _ => {}
         }
     }
 }
